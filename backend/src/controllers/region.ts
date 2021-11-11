@@ -24,8 +24,10 @@ const addRegion = async (req: Request, res: Response) => {
   }
 
   try {
-    await regionService.addRegion(regionName.trim());
-    res.status(201).json({ status: 'success', message: 'Region created' });
+    const region = await regionService.addRegion(regionName.trim());
+    res
+      .status(201)
+      .json({ status: 'success', message: 'Region created', result: region });
   } catch (error) {
     logger.error(`[${loggerTopic.REGION}] ${error}`);
     res.status(500).json({ status: 'error' });
