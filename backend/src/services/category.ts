@@ -4,8 +4,7 @@ import { ProductCategory } from '../entities/ProductCategory';
 const addCategory = async (categoryName: string) => {
   const categoryRepo = getRepository(ProductCategory);
   const category = categoryRepo.create({ categoryName });
-  await categoryRepo.save(category);
-  return;
+  return await categoryRepo.save(category);
 };
 
 const getCategories = async () => {
