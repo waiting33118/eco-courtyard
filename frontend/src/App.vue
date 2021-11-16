@@ -35,6 +35,7 @@ body {
 .el-header {
   display: flex;
   align-items: center;
-  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.2);
+  background-color: #67af67;
 }
 </style>
