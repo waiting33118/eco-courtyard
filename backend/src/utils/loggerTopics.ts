@@ -3,4 +3,5 @@ export const loggerTopic = {
   DATABASE: 'DATABASE',
   CATEGORY: 'CATEGORY',
   REGION: 'REGION',
+  USER: 'USER'
 } as const;

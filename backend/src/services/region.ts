@@ -4,7 +4,7 @@ import { ProductRegion } from '../entities/ProductRegion';
 const addRegion = async (regionName: string) => {
   const regionRepo = getRepository(ProductRegion);
   const region = regionRepo.create({ regionName });
-  await regionRepo.save(region);
+  return await regionRepo.save(region);
 };
 
 const getRegions = async () => {

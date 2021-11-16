@@ -1,4 +1,5 @@
 import categoryService from './category';
 import regionService from './region';
+import userService from './user';
 
-export { categoryService, regionService };
+export { categoryService, regionService, userService };

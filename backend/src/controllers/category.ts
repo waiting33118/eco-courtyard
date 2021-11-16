@@ -24,8 +24,12 @@ const addCategory = async (req: Request, res: Response) => {
   }
 
   try {
-    await categoryService.addCategory(categoryName.trim());
-    res.status(201).json({ status: 'success', message: 'Category created' });
+    const newCategory = await categoryService.addCategory(categoryName.trim());
+    res.status(201).json({
+      status: 'success',
+      message: 'Category created',
+      result: newCategory
+    });
   } catch (error) {
     logger.error(`[${loggerTopic.CATEGORY}] ${error}`);
     res.status(500).json({ status: 'error' });
