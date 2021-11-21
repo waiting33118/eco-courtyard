@@ -1,36 +1,34 @@
 import { getRepository } from 'typeorm';
-import { ProductCategory } from '../entities/ProductCategory';
+import { RestaurantCategory } from '../entities/RestaurantCategory';
 
 const addCategory = async (categoryName: string) => {
-  const categoryRepo = getRepository(ProductCategory);
+  const categoryRepo = getRepository(RestaurantCategory);
   const category = categoryRepo.create({ categoryName });
   return await categoryRepo.save(category);
 };
 
 const getCategories = async () => {
-  const categoryRepo = getRepository(ProductCategory);
+  const categoryRepo = getRepository(RestaurantCategory);
   const categories = await categoryRepo.find();
   return categories;
 };
 
-const getCategory = async (categoryId: string) => {
-  const categoryRepo = getRepository(ProductCategory);
+const getCategory = async (categoryId: number) => {
+  const categoryRepo = getRepository(RestaurantCategory);
   const category = await categoryRepo.findOne(categoryId);
   return category;
 };
 
-const editCategory = async (categoryId: string, newCategoryName: string) => {
-  const categoryRepo = getRepository(ProductCategory);
-  await categoryRepo.update(categoryId, {
+const editCategory = async (categoryId: number, newCategoryName: string) => {
+  const categoryRepo = getRepository(RestaurantCategory);
+  return await categoryRepo.update(categoryId, {
     categoryName: newCategoryName
   });
-  return;
 };
 
 const deleteCategory = async (categoryId: string) => {
-  const categoryRepo = getRepository(ProductCategory);
-  await categoryRepo.delete(categoryId);
-  return;
+  const categoryRepo = getRepository(RestaurantCategory);
+  return await categoryRepo.delete(categoryId);
 };
 
 export default {
