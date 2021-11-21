@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { logger } from '../plugins/logger';
 import { regionService } from '../services';
+import { isEmptyString } from '../utils';
 import { loggerTopic } from '../utils/loggerTopics';
 
 type TRegionReqBody = {
@@ -15,7 +16,7 @@ type TRegionReqParam = {
 const addRegion = async (req: Request, res: Response) => {
   const { regionName } = req.body as TRegionReqBody;
 
-  if (typeof regionName === 'undefined' || regionName.trim() === '') {
+  if (typeof regionName === 'undefined' || isEmptyString(regionName)) {
     res.status(400).json({
       status: 'error',
       reason: 'Region name is required and cannot be empty string'
@@ -24,8 +25,10 @@ const addRegion = async (req: Request, res: Response) => {
   }
 
   try {
-    await regionService.addRegion(regionName.trim());
-    res.status(201).json({ status: 'success', message: 'Region created' });
+    const region = await regionService.addRegion(regionName.trim());
+    res
+      .status(201)
+      .json({ status: 'success', message: 'Region created', result: region });
   } catch (error) {
     logger.error(`[${loggerTopic.REGION}] ${error}`);
     res.status(500).json({ status: 'error' });
@@ -51,7 +54,7 @@ const getRegion = async (req: Request, res: Response) => {
   }
 
   try {
-    const region = await regionService.getRegion(regionId);
+    const region = await regionService.getRegion(+regionId);
     res.json({ status: 'success', result: region });
   } catch (error) {
     logger.error(`[${loggerTopic.REGION}] ${error}`);
@@ -67,7 +70,7 @@ const editRegion = async (req: Request, res: Response) => {
     res.status(400).json({ status: 'error', reason: 'Region id format error' });
     return;
   }
-  if (typeof newRegionName === 'undefined' || newRegionName.trim() === '') {
+  if (typeof newRegionName === 'undefined' || isEmptyString(newRegionName)) {
     res.status(400).json({
       status: 'error',
       reason: 'New region name is required and cannot be empty string'
@@ -76,7 +79,7 @@ const editRegion = async (req: Request, res: Response) => {
   }
 
   try {
-    await regionService.editRegion(regionId, newRegionName.trim());
+    await regionService.editRegion(+regionId, newRegionName.trim());
     res.json({ status: 'success', result: 'Category edited' });
   } catch (error) {
     logger.error(`[${loggerTopic.REGION}] ${error}`);

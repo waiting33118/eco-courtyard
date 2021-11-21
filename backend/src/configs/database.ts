@@ -18,7 +18,7 @@ createConnection({
   port: +port,
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
+  database: process.env.DATABASE_NAME
 })
   .then(() => logger.info(`[${loggerTopic.DATABASE}] Database connected`))
   .catch((error) => logger.error(`[${loggerTopic.DATABASE}] ${error}`));

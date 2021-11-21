@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { logger } from '../plugins/logger';
 import { categoryService } from '../services';
+import { isEmptyString } from '../utils';
 import { loggerTopic } from '../utils/loggerTopics';
 
 type TCategoryReqBody = {
@@ -15,7 +16,7 @@ type TCategoryReqParam = {
 const addCategory = async (req: Request, res: Response) => {
   const { categoryName } = req.body as TCategoryReqBody;
 
-  if (typeof categoryName === 'undefined' || categoryName.trim() === '') {
+  if (typeof categoryName === 'undefined' || isEmptyString(categoryName)) {
     res.status(400).json({
       status: 'error',
       reason: 'Category name is required and cannot be empty string'
@@ -24,8 +25,12 @@ const addCategory = async (req: Request, res: Response) => {
   }
 
   try {
-    await categoryService.addCategory(categoryName.trim());
-    res.status(201).json({ status: 'success', message: 'Category created' });
+    const newCategory = await categoryService.addCategory(categoryName.trim());
+    res.status(201).json({
+      status: 'success',
+      message: 'Category created',
+      result: newCategory
+    });
   } catch (error) {
     logger.error(`[${loggerTopic.CATEGORY}] ${error}`);
     res.status(500).json({ status: 'error' });
@@ -53,7 +58,7 @@ const getCategory = async (req: Request, res: Response) => {
   }
 
   try {
-    const category = await categoryService.getCategory(categoryId);
+    const category = await categoryService.getCategory(+categoryId);
     res.json({ status: 'success', result: category });
   } catch (error) {
     logger.error(`[${loggerTopic.CATEGORY}] ${error}`);
@@ -71,7 +76,10 @@ const editCategory = async (req: Request, res: Response) => {
       .json({ status: 'error', reason: 'Category id format error' });
     return;
   }
-  if (typeof newCategoryName === 'undefined' || newCategoryName.trim() === '') {
+  if (
+    typeof newCategoryName === 'undefined' ||
+    isEmptyString(newCategoryName)
+  ) {
     res.status(400).json({
       status: 'error',
       reason: 'New category name is required and cannot be empty string'
@@ -80,7 +88,7 @@ const editCategory = async (req: Request, res: Response) => {
   }
 
   try {
-    await categoryService.editCategory(categoryId, newCategoryName.trim());
+    await categoryService.editCategory(+categoryId, newCategoryName.trim());
     res.json({ status: 'success', result: 'Category edited' });
   } catch (error) {
     logger.error(`[${loggerTopic.CATEGORY}] ${error}`);
