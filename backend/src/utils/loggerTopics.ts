@@ -3,5 +3,7 @@ export const loggerTopic = {
   DATABASE: 'DATABASE',
   CATEGORY: 'CATEGORY',
   REGION: 'REGION',
-  USER: 'USER'
+  USER: 'USER',
+  IMGUR: 'IMGUR',
+  RESTAURANT: 'RESTAURANT'
 } as const;
