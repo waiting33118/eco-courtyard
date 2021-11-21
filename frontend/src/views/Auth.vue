@@ -39,13 +39,10 @@ export default {
           email: loginForm.data.email,
           password: loginForm.data.password
         });
-
         loginForm.data.email = '';
         loginForm.data.password = '';
         button.login.isLoading = false;
-        const { data } = await axios.get('/user/profile');
-        store.dispatch('setUserInfo', { ...data.result });
-        store.dispatch('setIsAuth', true);
+        store.dispatch('setUserInfo');
         router.push('/');
       } catch (error) {
         button.login.isLoading = false;
