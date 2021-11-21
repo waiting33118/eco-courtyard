@@ -1,4 +1,6 @@
+import { axios } from '../plugins';
 import { createStore } from 'vuex';
+import router from '../router';
 
 export default createStore({
   state: {
@@ -7,7 +9,8 @@ export default createStore({
       email: '',
       username: '',
       haveStore: false,
-      isAdmin: false
+      isAdmin: false,
+      restaurant: null
     },
     isAuthenticated: false
   },
@@ -18,20 +21,50 @@ export default createStore({
       state.userInfo.username = payload.username;
       state.userInfo.haveStore = payload.haveStore;
       state.userInfo.isAdmin = payload.isAdmin;
+      state.userInfo.restaurant = payload.restaurant;
     },
     setIsAuth(state, isAuth) {
       state.isAuthenticated = isAuth;
     }
   },
   actions: {
-    setUserInfo({ commit }, { userId, email, username, haveStore, isAdmin }) {
-      commit('setUserInfo', { userId, email, username, haveStore, isAdmin });
+    async setUserInfo({ commit }) {
+      try {
+        const { data } = await axios.get('/user/profile');
+        commit('setUserInfo', { ...data.result });
+        commit('setIsAuth', true);
+      } catch (error) {
+        commit('setUserInfo', {
+          userId: '',
+          email: '',
+          username: '',
+          haveStore: false,
+          isAdmin: false,
+          restaurant: null
+        });
+        commit('setIsAuth', false);
+      }
     },
-    /**
-     * @param {boolean} isAuth
-     */
-    setIsAuth({ commit }, isAuth) {
-      commit('setIsAuth', isAuth);
+
+    async setUserLogout({ commit }) {
+      await axios.post('/user/logout');
+      commit('setUserInfo', {
+        userId: '',
+        email: '',
+        username: '',
+        haveStore: false,
+        isAdmin: false,
+        restaurant: null
+      });
+      commit('setIsAuth', false);
+    },
+
+    async setRestaurantRegister({ dispatch }, formData) {
+      await axios.post('/restaurant/register', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      dispatch('setUserInfo');
+      router.push('/');
     }
   },
   getters: {
