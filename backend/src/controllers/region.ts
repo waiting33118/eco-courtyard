@@ -54,7 +54,7 @@ const getRegion = async (req: Request, res: Response) => {
   }
 
   try {
-    const region = await regionService.getRegion(regionId);
+    const region = await regionService.getRegion(+regionId);
     res.json({ status: 'success', result: region });
   } catch (error) {
     logger.error(`[${loggerTopic.REGION}] ${error}`);
@@ -79,7 +79,7 @@ const editRegion = async (req: Request, res: Response) => {
   }
 
   try {
-    await regionService.editRegion(regionId, newRegionName.trim());
+    await regionService.editRegion(+regionId, newRegionName.trim());
     res.json({ status: 'success', result: 'Category edited' });
   } catch (error) {
     logger.error(`[${loggerTopic.REGION}] ${error}`);
