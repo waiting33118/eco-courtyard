@@ -1,3 +1,3 @@
-export const isEmptyString = (test: string) => {
-  return test.trim() === '';
+export const isEmptyString = (testItem: string) => {
+  return testItem.trim() === '';
 };
