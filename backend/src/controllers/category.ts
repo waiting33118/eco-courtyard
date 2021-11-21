@@ -58,7 +58,7 @@ const getCategory = async (req: Request, res: Response) => {
   }
 
   try {
-    const category = await categoryService.getCategory(categoryId);
+    const category = await categoryService.getCategory(+categoryId);
     res.json({ status: 'success', result: category });
   } catch (error) {
     logger.error(`[${loggerTopic.CATEGORY}] ${error}`);
@@ -88,7 +88,7 @@ const editCategory = async (req: Request, res: Response) => {
   }
 
   try {
-    await categoryService.editCategory(categoryId, newCategoryName.trim());
+    await categoryService.editCategory(+categoryId, newCategoryName.trim());
     res.json({ status: 'success', result: 'Category edited' });
   } catch (error) {
     logger.error(`[${loggerTopic.CATEGORY}] ${error}`);
