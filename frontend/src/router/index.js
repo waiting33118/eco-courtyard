@@ -25,14 +25,22 @@ const routes = [
     component: () => import('../views/Cart.vue')
   },
   {
+    path: '/restaurant/register',
+    name: 'RestaurantRegister',
+    component: () => import('../views/RestaurantRegister.vue')
+  },
+  {
     path: '/restaurant',
     name: 'Restaurant',
     component: () => import('../views/Restaurant.vue')
   },
   {
-    path: '/restaurant/register',
-    name: 'RestaurantRegister',
-    component: () => import('../views/RestaurantRegister.vue')
+    path: '/restaurant/edit',
+    name: 'RestaurantEdit'
+  },
+  {
+    path: '/restaurant/:id',
+    name: 'RestaurantDetail'
   }
 ];
 
