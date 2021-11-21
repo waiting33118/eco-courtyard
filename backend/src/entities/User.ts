@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Restaurant } from './Restaurant';
 
 @Entity({ name: 'User' })
 export class User {
@@ -20,10 +22,20 @@ export class User {
   @Column({ type: 'varchar', nullable: false })
   username!: string;
 
-  @Column({ type: 'boolean', nullable: false, default: false })
+  @Column({
+    type: 'boolean',
+    name: 'is_registered_restaurant',
+    nullable: false,
+    default: false
+  })
   isRegisteredRestaurant!: boolean;
 
-  @Column({ type: 'boolean', nullable: false, default: false })
+  @Column({
+    type: 'boolean',
+    name: 'is_admin',
+    nullable: false,
+    default: false
+  })
   isAdmin!: boolean;
 
   @CreateDateColumn()
@@ -31,4 +43,7 @@ export class User {
 
   @UpdateDateColumn()
   updated_at!: Date;
+
+  @OneToOne(() => Restaurant, (restaurant) => restaurant.owner)
+  restaurant!: Restaurant;
 }

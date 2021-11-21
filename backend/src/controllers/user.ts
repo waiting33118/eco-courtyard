@@ -94,7 +94,7 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const getCurrentUser = (req: Request, res: Response) => {
-  const { id, email, username, isAdmin, isRegisteredRestaurant } =
+  const { id, email, username, isAdmin, isRegisteredRestaurant, restaurant } =
     req.user as Express.User;
 
   const sessionUser = {
@@ -102,8 +102,10 @@ const getCurrentUser = (req: Request, res: Response) => {
     username,
     email,
     haveStore: isRegisteredRestaurant,
-    isAdmin
+    isAdmin,
+    restaurant
   } as IUserProfile;
+
   res.json({ status: 'success', result: sessionUser });
 };
 

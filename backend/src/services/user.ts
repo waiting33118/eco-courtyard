@@ -14,11 +14,17 @@ const getUserByEmail = async (email: string) => {
 
 const getUserById = async (userId: number) => {
   const userRepo = getRepository(User);
-  return await userRepo.findOne(userId);
+  return await userRepo.findOne(userId, { relations: ['restaurant'] });
+};
+
+const editUser = async (userId: number, partial: Partial<User>) => {
+  const userRepo = getRepository(User);
+  return await userRepo.update(userId, partial);
 };
 
 export default {
   addUser,
   getUserByEmail,
-  getUserById
+  getUserById,
+  editUser
 };
