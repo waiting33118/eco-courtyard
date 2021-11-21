@@ -6,13 +6,13 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 
-@Entity({ name: 'Product_Category' })
-export class ProductCategory {
+@Entity({ name: 'Restaurant_Region' })
+export class RestaurantRegion {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: 'category_name', type: 'varchar', nullable: false })
-  categoryName!: string;
+  @Column({ name: 'region_name', type: 'varchar', nullable: false })
+  regionName!: string;
 
   @CreateDateColumn()
   created_at!: Date;
