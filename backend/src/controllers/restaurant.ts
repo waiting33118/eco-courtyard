@@ -73,8 +73,8 @@ const addRestaurant = async (req: Request, res: Response) => {
 
   try {
     await restaurantService.addRestaurant({
-      name,
-      address,
+      name: name.trim(),
+      address: address.trim(),
       startTime,
       closeTime,
       imageUrl,
