@@ -5,5 +5,6 @@ export const loggerTopic = {
   REGION: 'REGION',
   USER: 'USER',
   IMGUR: 'IMGUR',
-  RESTAURANT: 'RESTAURANT'
+  RESTAURANT: 'RESTAURANT',
+  CUISINE: 'CUISINE'
 } as const;
