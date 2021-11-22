@@ -6,6 +6,7 @@ import middlewares from '../../middlewares';
 const router = express.Router();
 const upload = multer();
 
+/* restaurant */
 router.get('/restaurant', controllers.restaurant.getRestaurants);
 router.get('/restaurant/:restaurantId', controllers.restaurant.getRestaurant);
 router.post(
@@ -15,6 +16,15 @@ router.post(
   controllers.restaurant.addRestaurant
 );
 
+/* cuisine */
+router.post(
+  '/cuisine',
+  middlewares.auth.isAuthenticated,
+  middlewares.auth.isRestaurantOwner,
+  controllers.cuisine.addCuisine
+);
+
+/* category */
 router.get('/category', controllers.category.getCategories);
 router.get('/category/:categoryId', controllers.category.getCategory);
 router.post(
@@ -36,6 +46,7 @@ router.delete(
   controllers.category.deleteCategory
 );
 
+/* region */
 router.get('/region', controllers.region.getRegions);
 router.get('/region/:regionId', controllers.region.getRegion);
 router.post(
@@ -57,6 +68,7 @@ router.delete(
   controllers.region.deleteRegion
 );
 
+/*  user */
 router.post('/user/signup', controllers.user.addUser);
 router.post(
   '/user/login',
