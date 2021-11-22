@@ -58,7 +58,11 @@ const addUser = async (req: Request, res: Response) => {
   try {
     const username = email.split('@')[0];
     const hashPassword = await hash(password, 10);
-    const user = await userService.addUser(email, hashPassword, username);
+    const user = await userService.addUser(
+      email.trim(),
+      hashPassword,
+      username
+    );
     res.json({
       status: 'success',
       result: {
