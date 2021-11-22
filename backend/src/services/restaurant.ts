@@ -39,13 +39,15 @@ const addRestaurant = async (fields: RequiredFields) => {
 
 const getRestaurants = async () => {
   const restaurantRepo = getRepository(Restaurant);
-  return await restaurantRepo.find({ relations: ['category', 'region'] });
+  return await restaurantRepo.find({
+    relations: ['category', 'region', 'cuisines']
+  });
 };
 
 const getRestaurant = async (restaurantId: number) => {
   const restaurantRepo = getRepository(Restaurant);
   return await restaurantRepo.findOne(restaurantId, {
-    relations: ['category', 'region']
+    relations: ['category', 'region', 'cuisines']
   });
 };
 
