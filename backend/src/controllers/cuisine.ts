@@ -1,19 +1,16 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { AppRequest } from '../types';
 import { logger } from '../plugins/logger';
 import { loggerTopic } from '../utils/loggerTopics';
-import { isEmptyString } from '../utils';
 import { cuisineService } from '../services';
+import { isEmptyString } from '../utils';
 
-type TCuisineReqBody = {
-  cuisineName?: string;
-  price?: string;
-};
-
-const addCuisine = async (req: Request, res: Response) => {
-  const { cuisineName, price } = req.body as TCuisineReqBody;
+const addCuisine = async (req: AppRequest, res: Response) => {
+  const { cuisineName, price } = req.body;
   const {
     restaurant: { id: restaurantId }
-  } = req.user as Express.User;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  } = req.user!;
 
   if (
     typeof cuisineName === 'undefined' ||
@@ -45,6 +42,19 @@ const addCuisine = async (req: Request, res: Response) => {
   }
 };
 
+const getCuisine = async (req: AppRequest, res: Response) => {
+  const { cuisineId } = req.params;
+
+  try {
+    const cuisine = await cuisineService.getCuisine(+cuisineId);
+    res.json({ status: 'success', result: cuisine });
+  } catch (error) {
+    logger.error(`[${loggerTopic.CUISINE}] ${error}`);
+    res.status(500).json({ status: 'error' });
+  }
+};
+
 export default {
-  addCuisine
+  addCuisine,
+  getCuisine
 };
