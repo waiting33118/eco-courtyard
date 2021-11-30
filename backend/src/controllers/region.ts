@@ -1,20 +1,12 @@
 import { Request, Response } from 'express';
+import { AppRequest } from '../types';
 import { logger } from '../plugins/logger';
+import { loggerTopic } from '../utils/loggerTopics';
 import { regionService } from '../services';
 import { isEmptyString } from '../utils';
-import { loggerTopic } from '../utils/loggerTopics';
 
-type TRegionReqBody = {
-  regionName?: string;
-  newRegionName?: string;
-};
-
-type TRegionReqParam = {
-  regionId: string;
-};
-
-const addRegion = async (req: Request, res: Response) => {
-  const { regionName } = req.body as TRegionReqBody;
+const addRegion = async (req: AppRequest, res: Response) => {
+  const { regionName } = req.body;
 
   if (typeof regionName === 'undefined' || isEmptyString(regionName)) {
     res.status(400).json({
@@ -45,8 +37,8 @@ const getRegions = async (req: Request, res: Response) => {
   }
 };
 
-const getRegion = async (req: Request, res: Response) => {
-  const { regionId } = req.params as TRegionReqParam;
+const getRegion = async (req: AppRequest, res: Response) => {
+  const { regionId } = req.params;
 
   if (!Number.isInteger(+regionId)) {
     res.status(400).json({ status: 'error', reason: 'Region id format error' });
@@ -62,9 +54,9 @@ const getRegion = async (req: Request, res: Response) => {
   }
 };
 
-const editRegion = async (req: Request, res: Response) => {
-  const { newRegionName } = req.body as TRegionReqBody;
-  const { regionId } = req.params as TRegionReqParam;
+const editRegion = async (req: AppRequest, res: Response) => {
+  const { newRegionName } = req.body;
+  const { regionId } = req.params;
 
   if (!Number.isInteger(+regionId)) {
     res.status(400).json({ status: 'error', reason: 'Region id format error' });
@@ -87,8 +79,8 @@ const editRegion = async (req: Request, res: Response) => {
   }
 };
 
-const deleteRegion = async (req: Request, res: Response) => {
-  const { regionId } = req.params as TRegionReqParam;
+const deleteRegion = async (req: AppRequest, res: Response) => {
+  const { regionId } = req.params;
 
   if (!Number.isInteger(+regionId)) {
     res.status(400).json({ status: 'error', reason: 'Region id format error' });

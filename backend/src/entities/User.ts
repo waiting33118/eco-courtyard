@@ -2,10 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Cart } from './Cart';
 import { Restaurant } from './Restaurant';
 
 @Entity({ name: 'User' })
@@ -46,4 +48,7 @@ export class User {
 
   @OneToOne(() => Restaurant, (restaurant) => restaurant.owner)
   restaurant!: Restaurant;
+
+  @OneToMany(() => Cart, (cart) => cart.customer)
+  carts!: Cart[];
 }

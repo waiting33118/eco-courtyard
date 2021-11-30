@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { ImgurResponse } from '.';
+import { ImgurResponse } from '../types';
 
 export const uploadImage = async (
   base64Image: string

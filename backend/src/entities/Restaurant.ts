@@ -6,8 +6,10 @@ import {
   UpdateDateColumn,
   JoinColumn,
   OneToOne,
-  ManyToOne
+  ManyToOne,
+  OneToMany
 } from 'typeorm';
+import { Cuisine } from './Cuisine';
 import { RestaurantCategory } from './RestaurantCategory';
 import { RestaurantRegion } from './RestaurantRegion';
 import { User } from './User';
@@ -45,6 +47,9 @@ export class Restaurant {
   @ManyToOne(() => RestaurantRegion)
   @JoinColumn()
   region!: RestaurantRegion;
+
+  @OneToMany(() => Cuisine, (cuisine) => cuisine.restaurant)
+  cuisines!: Cuisine[];
 
   @OneToOne(() => User, (user) => user.restaurant)
   @JoinColumn()

@@ -1,19 +1,13 @@
-import { IUserProfile } from './controller';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
+import { AppRequest, UserProfile } from '../types';
 import { logger } from '../plugins/logger';
 import { loggerTopic } from '../utils/loggerTopics';
 import { isEmptyString } from '../utils';
 import { userService } from '../services';
 import { hash } from 'bcrypt';
 
-type TUserReqBody = {
-  email?: string;
-  password?: string;
-  confirmPassword?: string;
-};
-
-const addUser = async (req: Request, res: Response) => {
-  const { email, password, confirmPassword } = req.body as TUserReqBody;
+const addUser = async (req: AppRequest, res: Response) => {
+  const { email, password, confirmPassword } = req.body;
 
   if (
     typeof email === 'undefined' ||
@@ -58,7 +52,11 @@ const addUser = async (req: Request, res: Response) => {
   try {
     const username = email.split('@')[0];
     const hashPassword = await hash(password, 10);
-    const user = await userService.addUser(email, hashPassword, username);
+    const user = await userService.addUser(
+      email.trim(),
+      hashPassword,
+      username
+    );
     res.json({
       status: 'success',
       result: {
@@ -67,7 +65,7 @@ const addUser = async (req: Request, res: Response) => {
         username: user.username,
         haveStore: user.isRegisteredRestaurant,
         isAdmin: user.isAdmin
-      } as IUserProfile
+      }
     });
   } catch (error) {
     logger.error(`[${loggerTopic.USER}] ${error}`);
@@ -75,8 +73,8 @@ const addUser = async (req: Request, res: Response) => {
   }
 };
 
-const loginUser = (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body as TUserReqBody;
+const loginUser = (req: AppRequest, res: Response, next: NextFunction) => {
+  const { email, password } = req.body;
 
   if (
     typeof email === 'undefined' ||
@@ -93,18 +91,27 @@ const loginUser = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-const getCurrentUser = (req: Request, res: Response) => {
-  const { id, email, username, isAdmin, isRegisteredRestaurant, restaurant } =
-    req.user as Express.User;
+const getCurrentUser = (req: AppRequest, res: Response) => {
+  const {
+    id: userId,
+    email,
+    username,
+    isAdmin,
+    isRegisteredRestaurant,
+    restaurant,
+    carts
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  } = req.user!;
 
-  const sessionUser = {
-    userId: id,
+  const sessionUser = <UserProfile>{
+    userId,
     username,
     email,
     haveStore: isRegisteredRestaurant,
     isAdmin,
-    restaurant
-  } as IUserProfile;
+    restaurant,
+    carts
+  };
 
   res.json({ status: 'success', result: sessionUser });
 };

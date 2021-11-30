@@ -16,7 +16,7 @@ const localStrategy = new Strategy(
       if (!(await compare(password, user.password))) return done(null, false);
       done(null, user);
     } catch (error) {
-      logger.error(logger.error(`[${loggerTopic.USER}] ${error}`));
+      logger.error(logger.error(`[${loggerTopic.PASSPORT}] ${error}`));
       done(error);
     }
   }
@@ -29,7 +29,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (userId: number, done) => {
   const user = await userService.getUserById(userId);
-  done(null, user);
+  if (user) done(null, user);
 });
 
 export default passport;

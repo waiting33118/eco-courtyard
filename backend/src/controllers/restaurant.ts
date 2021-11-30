@@ -1,24 +1,12 @@
 import { Request, Response } from 'express';
-import { uploadImage } from '../plugins/imgur';
+import { AppRequest } from '../types';
 import { logger } from '../plugins/logger';
+import { loggerTopic } from '../utils/loggerTopics';
 import { restaurantService, userService } from '../services';
 import { isEmptyString } from '../utils';
-import { loggerTopic } from '../utils/loggerTopics';
+import { uploadImage } from '../plugins/imgur';
 
-type TRestaurantReqBody = {
-  selectedCategory?: string;
-  selectedRegion?: string;
-  name?: string;
-  address?: string;
-  startTime?: string;
-  closeTime?: string;
-};
-
-type TRestaurantReqParam = {
-  restaurantId: string;
-};
-
-const addRestaurant = async (req: Request, res: Response) => {
+const addRestaurant = async (req: AppRequest, res: Response) => {
   const {
     selectedCategory,
     selectedRegion,
@@ -26,9 +14,10 @@ const addRestaurant = async (req: Request, res: Response) => {
     address,
     startTime,
     closeTime
-  } = req.body as TRestaurantReqBody;
+  } = req.body;
   const image = req.file;
-  const { id: userId } = req.user as Express.User;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const { id: userId } = req.user!;
   let imageUrl = '';
 
   if (
@@ -73,8 +62,8 @@ const addRestaurant = async (req: Request, res: Response) => {
 
   try {
     await restaurantService.addRestaurant({
-      name,
-      address,
+      name: name.trim(),
+      address: address.trim(),
       startTime,
       closeTime,
       imageUrl,
@@ -111,8 +100,8 @@ const getRestaurants = async (req: Request, res: Response) => {
   }
 };
 
-const getRestaurant = async (req: Request, res: Response) => {
-  const { restaurantId } = req.params as TRestaurantReqParam;
+const getRestaurant = async (req: AppRequest, res: Response) => {
+  const { restaurantId } = req.params;
 
   try {
     const restaurant = await restaurantService.getRestaurant(+restaurantId);
