@@ -40,8 +40,9 @@ const routes = [
     component: () => import('../views/RestaurantEdit.vue')
   },
   {
-    path: '/restaurant/:id',
-    name: 'RestaurantDetail'
+    path: '/restaurant/:restaurantId',
+    name: 'RestaurantDetail',
+    component: () => import('../views/RestaurantDetail.vue')
   }
 ];
 
@@ -51,11 +52,16 @@ const router = createRouter({
 });
 
 const whiteListRoutes = ['/', '/auth'];
+const whiteListNameRoutes = ['RestaurantDetail'];
 const userIsAuth = computed(() => store.getters.getIsAuth);
 const userInfo = computed(() => store.getters.getUserInfo);
 
 router.beforeEach(async (to) => {
-  if (whiteListRoutes.includes(to.path)) return true;
+  if (
+    whiteListRoutes.includes(to.path) ||
+    whiteListNameRoutes.includes(to.name)
+  )
+    return true;
   if (!userIsAuth.value) {
     try {
       await axios.get('/user/profile');
