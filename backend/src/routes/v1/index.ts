@@ -17,6 +17,7 @@ router.post(
 );
 
 /* cuisine */
+router.get('/cuisine/:cuisineId', controllers.cuisine.getCuisine);
 router.post(
   '/cuisine',
   middlewares.auth.isAuthenticated,
@@ -85,6 +86,29 @@ router.post(
   '/user/logout',
   middlewares.auth.isAuthenticated,
   middlewares.auth.logout
+);
+
+/* cart */
+router.get(
+  '/cart',
+  middlewares.auth.isAuthenticated,
+  controllers.cart.getCartItems
+);
+router.post(
+  '/cart',
+  middlewares.auth.isAuthenticated,
+  controllers.cart.addItem
+);
+router.post('/cart/checkout', middlewares.auth.isAuthenticated);
+router.put(
+  '/cart/:cartId',
+  middlewares.auth.isAuthenticated,
+  controllers.cart.editItem
+);
+router.delete(
+  '/cart/:cartId',
+  middlewares.auth.isAuthenticated,
+  controllers.cart.deleteItem
 );
 
 export default router;
