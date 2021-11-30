@@ -11,7 +11,7 @@ const ORIGIN =
   process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
 const MemoryStore = createMemoryStore(session);
 
-app.use(cors({ origin: ORIGIN, credentials: true }));
+app.use(cors({ origin: ORIGIN, credentials: true, maxAge: 600 }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
