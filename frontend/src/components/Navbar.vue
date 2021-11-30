@@ -47,7 +47,18 @@ export default {
         >Hello, {{ userInfo.username }}</span
       >
       <el-menu-item v-if="!userIsAuth" index="/auth">Login/Signup</el-menu-item>
-      <el-menu-item index="/cart">Cart</el-menu-item>
+
+      <el-menu-item index="/cart">
+        <div class="cart__wrapper">
+          <el-badge
+            v-if="userInfo.carts.length > 0"
+            :value="userInfo.carts.length"
+            type="primary"
+          ></el-badge>
+          Cart
+        </div>
+      </el-menu-item>
+
       <el-menu-item v-if="userIsAuth" index="/restaurant"
         >Restaurant</el-menu-item
       >
@@ -88,6 +99,16 @@ export default {
       user-select: none;
       cursor: pointer;
       padding: 0 10px;
+    }
+  }
+
+  .cart__wrapper {
+    position: relative;
+
+    .el-badge {
+      position: absolute;
+      left: 25px;
+      top: -33px;
     }
   }
 }
