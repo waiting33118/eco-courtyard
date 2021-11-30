@@ -7,18 +7,16 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Restaurant } from './Restaurant';
+import { Cuisine } from './Cuisine';
+import { User } from './User';
 
-@Entity({ name: 'Cuisine' })
-export class Cuisine {
+@Entity({ name: 'Cart' })
+export class Cart {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', nullable: false })
-  name!: string;
-
   @Column({ type: 'integer', nullable: false })
-  price!: number;
+  quantity!: number;
 
   @CreateDateColumn()
   created_at!: Date;
@@ -26,7 +24,11 @@ export class Cuisine {
   @UpdateDateColumn()
   updated_at!: Date;
 
-  @ManyToOne(() => Restaurant, (restaurant) => restaurant.cuisines)
+  @ManyToOne(() => User, (user) => user.carts)
   @JoinColumn()
-  restaurant!: Restaurant;
+  customer!: User;
+
+  @ManyToOne(() => Cuisine)
+  @JoinColumn()
+  cuisine!: Cuisine;
 }
