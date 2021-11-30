@@ -1,9 +1,11 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Restaurant } from './Restaurant';
 
@@ -17,6 +19,12 @@ export class Cuisine {
 
   @Column({ type: 'integer', nullable: false })
   price!: number;
+
+  @CreateDateColumn()
+  created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
 
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.cuisines)
   @JoinColumn()
