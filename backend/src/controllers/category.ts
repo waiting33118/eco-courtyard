@@ -1,20 +1,12 @@
 import { Request, Response } from 'express';
+import { AppRequest } from '../types';
 import { logger } from '../plugins/logger';
 import { categoryService } from '../services';
 import { isEmptyString } from '../utils';
 import { loggerTopic } from '../utils/loggerTopics';
 
-type TCategoryReqBody = {
-  categoryName?: string;
-  newCategoryName?: string;
-};
-
-type TCategoryReqParam = {
-  categoryId: string;
-};
-
-const addCategory = async (req: Request, res: Response) => {
-  const { categoryName } = req.body as TCategoryReqBody;
+const addCategory = async (req: AppRequest, res: Response) => {
+  const { categoryName } = req.body;
 
   if (typeof categoryName === 'undefined' || isEmptyString(categoryName)) {
     res.status(400).json({
@@ -47,8 +39,8 @@ const getCategories = async (req: Request, res: Response) => {
   }
 };
 
-const getCategory = async (req: Request, res: Response) => {
-  const { categoryId } = req.params as TCategoryReqParam;
+const getCategory = async (req: AppRequest, res: Response) => {
+  const { categoryId } = req.params;
 
   if (!Number.isInteger(+categoryId)) {
     res
@@ -66,9 +58,9 @@ const getCategory = async (req: Request, res: Response) => {
   }
 };
 
-const editCategory = async (req: Request, res: Response) => {
-  const { newCategoryName } = req.body as TCategoryReqBody;
-  const { categoryId } = req.params as TCategoryReqParam;
+const editCategory = async (req: AppRequest, res: Response) => {
+  const { newCategoryName } = req.body;
+  const { categoryId } = req.params;
 
   if (!Number.isInteger(+categoryId)) {
     res
@@ -96,8 +88,8 @@ const editCategory = async (req: Request, res: Response) => {
   }
 };
 
-const deleteCategory = async (req: Request, res: Response) => {
-  const { categoryId } = req.params as TCategoryReqParam;
+const deleteCategory = async (req: AppRequest, res: Response) => {
+  const { categoryId } = req.params;
 
   if (!Number.isInteger(+categoryId)) {
     res
