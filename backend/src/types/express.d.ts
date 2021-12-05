@@ -57,6 +57,7 @@ interface CartReqBody {
   quantity?: string;
   updatedQuantity?: string;
   cartIds?: number[];
+  restaurantId?: number;
 }
 
 interface RequestParams

@@ -4,6 +4,7 @@ import userService from './user';
 import restaurantService from './restaurant';
 import cuisineService from './cuisine';
 import cartService from './cart';
+import orderService from './order';
 
 export {
   categoryService,
@@ -11,5 +12,6 @@ export {
   userService,
   restaurantService,
   cuisineService,
-  cartService
+  cartService,
+  orderService
 };

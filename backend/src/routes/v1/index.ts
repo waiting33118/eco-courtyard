@@ -99,7 +99,11 @@ router.post(
   middlewares.auth.isAuthenticated,
   controllers.cart.addItem
 );
-router.post('/cart/checkout', middlewares.auth.isAuthenticated);
+router.post(
+  '/cart/checkout',
+  middlewares.auth.isAuthenticated,
+  controllers.cart.checkout
+);
 router.put(
   '/cart/:cartId',
   middlewares.auth.isAuthenticated,
