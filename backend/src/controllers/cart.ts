@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { AppRequest } from '../types';
 import { logger } from '../plugins/logger';
 import { loggerTopic } from '../utils/loggerTopics';
-import { cartService } from '../services';
+import { cartService, orderService } from '../services';
 
 const addItem = async (req: AppRequest, res: Response) => {
   const { cuisineId, quantity } = req.body;
@@ -39,7 +39,7 @@ const getCartItems = async (req: AppRequest, res: Response) => {
   const { id: userId } = req.user!;
 
   try {
-    const cartItems = await cartService.getCartItems(userId);
+    const cartItems = await cartService.getCartItemsByUserId(userId);
     res.json({ status: 'success', result: cartItems });
   } catch (error) {
     logger.error(`[${loggerTopic.CART}] ${error}`);
@@ -98,19 +98,51 @@ const deleteItem = async (req: AppRequest, res: Response) => {
   }
 };
 
-// const checkout = async (req:AppRequest,res: Response) => {
+const checkout = async (req: AppRequest, res: Response) => {
+  const { cartIds, restaurantId } = req.body;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const { id: userId } = req.user!;
 
-//   try {
+  if (typeof cartIds === 'undefined' || cartIds.length === 0) {
+    res.status(400).json({
+      status: 'error',
+      reason: 'Cart IDs are required and must at least have one ID'
+    });
+    return;
+  }
 
-//   } catch (error) {
-//     logger.error(`[${loggerTopic.CART}] ${error}`);
-//     res.status(500).json({ status: 'error' });
-//   }
-// }
+  if (typeof restaurantId === 'undefined') {
+    res.status(400).json({
+      status: 'error',
+      reason: 'Required restaurant ID'
+    });
+    return;
+  }
+
+  try {
+    const cartItems = await cartService.getCartItemsByCartIds(cartIds);
+
+    // calculate total amount
+    const totalAmount = cartItems.reduce(
+      (acc, cart) => acc + cart.cuisine.price * cart.quantity,
+      0
+    );
+
+    // convert cartItems become an order
+    await orderService.checkout(totalAmount, restaurantId, userId, cartItems);
+    // remove cartIds from user cart
+    await cartService.deleteItem(cartIds);
+    res.json({ status: 'success' });
+  } catch (error) {
+    logger.error(`[${loggerTopic.CART}] ${error}`);
+    res.status(500).json({ status: 'error' });
+  }
+};
 
 export default {
   addItem,
   getCartItems,
   editItem,
-  deleteItem
+  deleteItem,
+  checkout
 };
