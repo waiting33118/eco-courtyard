@@ -8,6 +8,7 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { Cart } from './Cart';
+import { Order } from './Order';
 import { Restaurant } from './Restaurant';
 
 @Entity({ name: 'User' })
@@ -51,4 +52,7 @@ export class User {
 
   @OneToMany(() => Cart, (cart) => cart.customer)
   carts!: Cart[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders!: Order[];
 }
