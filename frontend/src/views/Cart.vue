@@ -1,18 +1,18 @@
 <script>
 import { computed, toRaw } from '@vue/runtime-core';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import { ElNotification } from 'element-plus';
 import axios from 'axios';
+
 export default {
   name: 'Cart',
   setup() {
     const store = useStore();
-    store.dispatch('updateCartFromDb');
+    const router = useRouter();
     const carts = computed(() => store.getters.getCarts);
-    const totalAmount = computed(() =>
-      carts.value.reduce((sum, cart) => {
-        return sum + cart.quantity * cart.cuisine.price;
-      }, 0)
+    const cartsByRestaurant = computed(
+      () => store.getters.getCartsByRestaurant
     );
 
     const handleIncrement = async (cartId) => {
@@ -78,12 +78,20 @@ export default {
       }
     };
 
-    const handleCheckOut = async () => {
-      const cartsToRaw = toRaw(carts.value);
-      const cartIds = cartsToRaw.map((cart) => cart.id);
+    const handleCheckOut = async (restaurantId) => {
+      const cartIds = cartsByRestaurant.value[restaurantId].meals.map(
+        (meal) => meal.cartId
+      );
       try {
-        await axios.post('/cart/checkout', { cartIds });
-        // TODO: clear vuex carts
+        await axios.post('/cart/checkout', { cartIds, restaurantId });
+        store.dispatch('updateCartFromDb');
+        router.push('/order');
+
+        ElNotification({
+          type: 'success',
+          title: 'Your order is processing',
+          message: 'Checking your order status in order page!'
+        });
       } catch (error) {
         ElNotification({
           type: 'error',
@@ -95,7 +103,7 @@ export default {
 
     return {
       carts,
-      totalAmount,
+      cartsByRestaurant,
       handleIncrement,
       handleDecrement,
       handleDelete,
@@ -113,19 +121,18 @@ export default {
       description="購物車空空如也～"
     ></el-empty>
 
-    <section v-else class="cart__wrapper">
+    <section
+      v-else
+      v-for="(cart, restaurantId) in cartsByRestaurant"
+      :key="restaurantId"
+      class="cart__wrapper"
+    >
+      <span class="title">{{ cart.name }}</span>
       <!-- table -->
-      <el-table :data="carts" style="width: 100%" stripe border>
-        <el-table-column
-          prop="cuisine.restaurant.name"
-          label="Store name"
-          align="center"
-        />
-        <el-table-column prop="cuisine.name" label="Item Name" align="center" />
+      <el-table :data="cart.meals" style="width: 100%" stripe border>
+        <el-table-column prop="cuisineName" label="Item Name" align="center" />
         <el-table-column label="Item Price" align="center">
-          <template #default="scope">
-            NT${{ scope.row.cuisine.price }}
-          </template>
+          <template #default="scope"> NT${{ scope.row.price }} </template>
         </el-table-column>
         <el-table-column label="Quantity" align="center">
           <template #default="scope">
@@ -135,7 +142,7 @@ export default {
                 type="primary"
                 size="mini"
                 round
-                @click="handleDecrement(scope.row.id)"
+                @click="handleDecrement(scope.row.cartId)"
               >
                 -
               </el-button>
@@ -144,7 +151,7 @@ export default {
                 type="primary"
                 size="mini"
                 round
-                @click="handleIncrement(scope.row.id)"
+                @click="handleIncrement(scope.row.cartId)"
               >
                 +
               </el-button>
@@ -153,12 +160,12 @@ export default {
         </el-table-column>
         <el-table-column label="Amount" align="center">
           <template #default="scope">
-            NT${{ scope.row.cuisine.price * scope.row.quantity }}
+            NT${{ scope.row.price * scope.row.quantity }}
           </template>
         </el-table-column>
         <el-table-column label="Delete" align="center">
           <template #default="scope">
-            <el-button type="danger" @click="handleDelete(scope.row.id)"
+            <el-button type="danger" @click="handleDelete(scope.row.cartId)"
               >Delete</el-button
             >
           </template>
@@ -166,9 +173,9 @@ export default {
       </el-table>
       <section class="total__wrapper">
         <div class="total">
-          Total: NT${{ totalAmount }}
+          Total: NT${{ cart.totalAmount }}
           <el-divider></el-divider>
-          <el-button type="warning" round @click="handleCheckOut"
+          <el-button type="warning" round @click="handleCheckOut(restaurantId)"
             >Checkout</el-button
           >
         </div>
@@ -185,6 +192,7 @@ export default {
   .title {
     font-size: 25px;
     font-weight: 800;
+    margin: 20px 0;
   }
 
   section {

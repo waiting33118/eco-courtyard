@@ -54,27 +54,22 @@ export default createStore({
       await axios.post('/restaurant/register', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      dispatch('setUserInfo');
+      await dispatch('setUserInfo');
       router.push('/');
     },
 
-    async setProductToCart({ commit, state }, product) {
+    async setProductToCart({ commit, dispatch, state }, product) {
       const index = state.userInfo.carts.findIndex(
         (item) => item.cuisine?.id === product.id
       );
 
       if (index === -1) {
         try {
-          const {
-            data: { result }
-          } = await axios.post('/cart', {
+          await axios.post('/cart', {
             cuisineId: product.id,
             quantity: product.quantity
           });
-          commit('setNewProductToCart', {
-            ...product,
-            cuisine: result.cuisine
-          });
+          await dispatch('updateCartFromDb');
           return true;
         } catch {
           return false;
@@ -88,10 +83,7 @@ export default createStore({
           cuisineId: product.id,
           quantity: updatedQuantity
         });
-        commit('updateSpecificCartProduct', {
-          targetIndex: index,
-          updatedQuantity
-        });
+        await dispatch('updateCartFromDb');
         return true;
       } catch {
         return false;
@@ -147,6 +139,45 @@ export default createStore({
 
     getCarts(state) {
       return state.userInfo.carts;
+    },
+
+    getCartsByRestaurant(state) {
+      /**
+       *  {
+       *    restaurantId : {
+       *
+       *       name: 'restaurant name',
+       *       meals: [{cuisineId: 1, cartId: 1, cuisineName: 'aaaaa', price: 35, quantity: 4 }],
+       *       totalAmount: 1234
+       *     }
+       *  }
+       */
+
+      const carts = {};
+
+      state.userInfo.carts.forEach((item) => {
+        const restaurantId = item.cuisine.restaurant.id;
+        carts[restaurantId] ||= {};
+        carts[restaurantId].name ||= item.cuisine.restaurant.name;
+        carts[restaurantId].meals ||= [];
+        carts[restaurantId].totalAmount ||= 0;
+        carts[restaurantId].meals.push({
+          cuisineId: item.cuisine.id,
+          cartId: item.id,
+          cuisineName: item.cuisine.name,
+          price: item.cuisine.price,
+          quantity: item.quantity
+        });
+      });
+
+      for (let cart in carts) {
+        carts[cart].totalAmount = carts[cart].meals.reduce(
+          (acc, meal) => acc + meal.price * meal.quantity,
+          0
+        );
+      }
+
+      return carts;
     }
   },
   modules: {}

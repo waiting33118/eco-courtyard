@@ -26,7 +26,7 @@ const addItem = async (
   );
 };
 
-const getCartItems = async (userId: number) => {
+const getCartItemsByUserId = async (userId: number) => {
   const cartRepo = getRepository(Cart);
   return await cartRepo.find({
     where: { customer: { id: userId } },
@@ -35,19 +35,27 @@ const getCartItems = async (userId: number) => {
   });
 };
 
+const getCartItemsByCartIds = async (cartIds: number[]) => {
+  const cartRepo = getRepository(Cart);
+  return await cartRepo.findByIds(cartIds, {
+    relations: ['cuisine', 'cuisine.restaurant']
+  });
+};
+
 const editItem = async (cartId: number, updatedQuantity: number) => {
   const cartRepo = getRepository(Cart);
   return await cartRepo.update(cartId, { quantity: updatedQuantity });
 };
 
-const deleteItem = async (cartId: number) => {
+const deleteItem = async (cartId: number | number[]) => {
   const cartRepo = getRepository(Cart);
   return await cartRepo.delete(cartId);
 };
 
 export default {
   addItem,
-  getCartItems,
+  getCartItemsByUserId,
+  getCartItemsByCartIds,
   editItem,
   deleteItem
 };

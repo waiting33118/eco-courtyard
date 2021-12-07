@@ -8,5 +8,6 @@ export const loggerTopic = {
   IMGUR: 'IMGUR',
   RESTAURANT: 'RESTAURANT',
   CUISINE: 'CUISINE',
-  CART: 'CART'
+  CART: 'CART',
+  ORDER: 'ORDER'
 } as const;

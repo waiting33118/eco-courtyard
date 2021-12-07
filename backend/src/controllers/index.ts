@@ -4,6 +4,7 @@ import region from './region';
 import user from './user';
 import cuisine from './cuisine';
 import cart from './cart';
+import order from './order';
 
 export default {
   restaurant,
@@ -11,5 +12,6 @@ export default {
   region,
   user,
   cuisine,
-  cart
+  cart,
+  order
 };
