@@ -54,7 +54,7 @@ export default createStore({
       await axios.post('/restaurant/register', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      dispatch('setUserInfo');
+      await dispatch('setUserInfo');
       router.push('/');
     },
 
