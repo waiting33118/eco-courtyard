@@ -55,7 +55,7 @@ export default {
           <div class="cart__footer">
             <span class="info">
               Order Time:
-              {{ new Date(order.created_at).toLocaleString() }}
+              {{ new Date(order.created_at).toGMTString() }}
             </span>
             <span class="bold">Total Amount: NT${{ order.totalAmount }}</span>
           </div>
