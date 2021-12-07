@@ -4,7 +4,7 @@ import './configs/database';
 import { logger } from './plugins/logger';
 import { loggerTopic } from './utils/loggerTopics';
 
-const PORT = process.env.SERVER_PORT || 3080;
+const PORT = process.env.PORT || 3080;
 
 app.listen(+PORT, () =>
   logger.info(
