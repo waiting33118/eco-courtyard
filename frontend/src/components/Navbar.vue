@@ -30,7 +30,9 @@ export default {
 
 <template>
   <div class="container">
-    <router-link to="/" class="title"><h1>Eco-courtyard</h1></router-link>
+    <router-link to="/" class="title__link"
+      ><span class="title">Eco-courtyard</span></router-link
+    >
 
     <el-menu
       mode="horizontal"
@@ -38,14 +40,15 @@ export default {
       class="menu"
       :ellipsis="false"
       default-active="/"
-      text-color="#ffffff"
-      active-text-color="#184d19"
+      text-color="#238f00"
+      active-text-color="#184f06"
       hover-background-color="transparent"
       router
     >
-      <span class="greet" v-if="userIsAuth"
-        >Hello, {{ userInfo.username }}</span
-      >
+      <el-sub-menu index="null" v-if="userIsAuth">
+        <template #title>Hello, {{ userInfo.username }}</template>
+        <el-menu-item index="/order">My Order</el-menu-item>
+      </el-sub-menu>
       <el-menu-item v-if="!userIsAuth" index="/auth">Login/Signup</el-menu-item>
 
       <el-menu-item index="/cart">
@@ -71,9 +74,13 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-.title {
+.title__link {
   text-decoration: none;
-  color: #ffffff;
+  .title {
+    color: #238f00;
+    font-size: 25px;
+    font-weight: 900;
+  }
 }
 
 .container {
@@ -86,15 +93,8 @@ export default {
   .menu {
     height: 100%;
 
-    .greet {
-      color: #ffffff;
-      line-height: 60px;
-      padding: 0 10px;
-      user-select: none;
-    }
-
     .logout {
-      color: #ffffff;
+      color: #238f00;
       line-height: 60px;
       user-select: none;
       cursor: pointer;

@@ -40,9 +40,48 @@
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label> Last update time </template>
-      {{ new Date(info.restaurant.updated_at) }}
+      {{ new Date(info.restaurant.updated_at).toLocaleString() }}
     </el-descriptions-item>
   </el-descriptions>
+
+  <!-- order -->
+  <section class="section">
+    <h1>Order Management</h1>
+    <div class="order__wrapper">
+      <el-card v-for="order in info.orders" :key="order.id">
+        <div class="order__row--wrapper">
+          <div class="order__row">
+            <div>#{{ order.id }}</div>
+            <div>訂購人: {{ order.user }}</div>
+            <div>
+              <div>
+                訂單時間: {{ new Date(order.created_at).toLocaleString() }}
+              </div>
+              <div v-if="order.isServed">
+                出餐時間: {{ new Date(order.updated_at).toLocaleString() }}
+              </div>
+            </div>
+            <div>總金額: {{ order.totalAmount }}</div>
+            <el-button
+              :type="order.isServed ? 'success' : 'primary'"
+              round
+              :disabled="order.isServed"
+              @click="handleShipment(order.id)"
+              >{{ order.isServed ? '已出餐' : '出餐' }}</el-button
+            >
+          </div>
+          <div class="order__items">
+            <span>訂單明細 (共{{ order.orderCuisines.length }}項)</span>
+            <ol>
+              <li v-for="item in order.orderCuisines" :key="item.id">
+                {{ item.cuisine.name }} x {{ item.quantity }}
+              </li>
+            </ol>
+          </div>
+        </div>
+      </el-card>
+    </div>
+  </section>
 
   <!-- cuisine table-->
   <section class="section">
@@ -74,7 +113,7 @@
       style="width: 100%"
       stripe
       border
-      height="500"
+      height="100vh"
     >
       <el-table-column prop="id" label="ID" align="center" />
       <el-table-column prop="name" label="Cuisine Name" align="center" />
@@ -103,6 +142,7 @@ import { computed, onMounted, reactive, ref } from '@vue/runtime-core';
 import { axios } from '../plugins';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+import { ElNotification } from 'element-plus';
 export default {
   name: 'Restaurant',
   setup() {
@@ -110,7 +150,7 @@ export default {
     const userInfo = computed(() => store.getters.getUserInfo);
     const router = useRouter();
     const isReady = ref(false);
-    const info = reactive({ restaurant: {} });
+    const info = reactive({ restaurant: {}, orders: [] });
     const cuisine = reactive({ name: '', price: '' });
 
     const handleEditRestaurant = () => {
@@ -133,12 +173,41 @@ export default {
     // TODO:
     const handleCuisineDelete = (index, row) => {};
 
+    const handleShipment = async (orderId) => {
+      try {
+        await axios.post('/order', { orderId, partial: { isServed: true } });
+        info.orders = info.orders.map((order) => {
+          if (order.id === orderId)
+            return {
+              ...order,
+              isServed: true,
+              updated_at: new Date().toUTCString()
+            };
+          return order;
+        });
+        ElNotification({
+          type: 'success',
+          title: `#${orderId} 已出餐`
+        });
+      } catch (error) {
+        ElNotification({
+          type: 'error',
+          title: 'Oops, something wrong, please try again'
+        });
+      }
+    };
+
     onMounted(async () => {
-      const { data } = await axios.get(
+      const { data: restaurant } = await axios.get(
         `/restaurant/${userInfo.value.restaurant.id}`
       );
-      info.restaurant = data.result;
+      info.restaurant = restaurant.result;
       isReady.value = true;
+
+      const { data: orders } = await axios.get(
+        `/order/restaurant/${userInfo.value.restaurant.id}`
+      );
+      info.orders = orders.result;
     });
 
     return {
@@ -148,7 +217,8 @@ export default {
       handleEditRestaurant,
       handleAddCuisine,
       handleCuisineEdit,
-      handleCuisineDelete
+      handleCuisineDelete,
+      handleShipment
     };
   }
 };
@@ -169,6 +239,36 @@ export default {
 
   .el-table {
     margin-top: 20px;
+  }
+}
+
+.order__wrapper {
+  width: 100%;
+  height: 100vh;
+  border: 1px solid #ebeef5;
+  padding: 10px;
+  overflow-y: auto;
+
+  .el-card {
+    margin: 20px 0;
+  }
+
+  .order__row--wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .order__row {
+      width: 100%;
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .order__items {
+      width: 100%;
+      padding: 10px 50px;
+    }
   }
 }
 </style>
