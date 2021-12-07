@@ -40,7 +40,7 @@
     </el-descriptions-item>
     <el-descriptions-item>
       <template #label> Last update time </template>
-      {{ new Date(info.restaurant.updated_at).toLocaleString() }}
+      {{ new Date(info.restaurant.updated_at).toGMTString() }}
     </el-descriptions-item>
   </el-descriptions>
 
@@ -55,10 +55,10 @@
             <div>訂購人: {{ order.user }}</div>
             <div>
               <div>
-                訂單時間: {{ new Date(order.created_at).toLocaleString() }}
+                訂單時間: {{ new Date(order.created_at).toGMTString() }}
               </div>
               <div v-if="order.isServed">
-                出餐時間: {{ new Date(order.updated_at).toLocaleString() }}
+                出餐時間: {{ new Date(order.updated_at).toGMTString() }}
               </div>
             </div>
             <div>總金額: {{ order.totalAmount }}</div>
