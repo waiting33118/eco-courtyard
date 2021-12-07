@@ -28,6 +28,33 @@ const checkout = async (
   return await orderRepo.save(order);
 };
 
+const getOrdersByUser = async (userId: number) => {
+  const orderRepo = getRepository(Order);
+  return await orderRepo.find({
+    where: { user: { id: userId } },
+    relations: ['restaurant', 'orderCuisines', 'orderCuisines.cuisine'],
+    order: { created_at: 'DESC' }
+  });
+};
+
+const getOrdersByRestaurant = async (restaurantId: number) => {
+  const orderRepo = getRepository(Order);
+  const orders = await orderRepo.find({
+    where: { restaurant: { id: restaurantId } },
+    relations: ['user', 'orderCuisines', 'orderCuisines.cuisine'],
+    order: { created_at: 'DESC' }
+  });
+  return orders.map((order) => ({ ...order, user: order.user.username }));
+};
+
+const editOrder = async (orderId: number, partial: Partial<Order>) => {
+  const orderRepo = getRepository(Order);
+  return await orderRepo.update(orderId, partial);
+};
+
 export default {
-  checkout
+  checkout,
+  getOrdersByUser,
+  getOrdersByRestaurant,
+  editOrder
 };

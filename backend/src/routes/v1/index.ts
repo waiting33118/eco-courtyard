@@ -115,4 +115,23 @@ router.delete(
   controllers.cart.deleteItem
 );
 
+/* order */
+router.get(
+  '/order',
+  middlewares.auth.isAuthenticated,
+  controllers.order.getOrdersByUser
+);
+router.get(
+  '/order/restaurant/:restaurantId',
+  middlewares.auth.isAuthenticated,
+  middlewares.auth.isRestaurantOwner,
+  controllers.order.getOrdersByRestaurant
+);
+router.post(
+  '/order',
+  middlewares.auth.isAuthenticated,
+  middlewares.auth.isRestaurantOwner,
+  controllers.order.editOrder
+);
+
 export default router;

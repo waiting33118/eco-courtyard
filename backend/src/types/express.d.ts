@@ -1,4 +1,5 @@
 import { User as UserEntity } from '../entities/User';
+import { Order } from '../entities/Order';
 import { Request, ParamsDictionary } from 'express-serve-static-core';
 
 declare global {
@@ -20,7 +21,8 @@ interface RequestBody
     RegionReqBody,
     CuisineReqBody,
     CategoryReqBody,
-    CartReqBody {}
+    CartReqBody,
+    OrderReqBody {}
 
 interface UserReqBody {
   email?: string;
@@ -60,12 +62,18 @@ interface CartReqBody {
   restaurantId?: number;
 }
 
+interface OrderReqBody {
+  orderId?: number;
+  partial?: Partial<Order>;
+}
+
 interface RequestParams
   extends RestaurantReqParams,
     RegionReqParams,
     CuisineReqParams,
     CategoryReqParams,
-    CartReqParams {}
+    CartReqParams,
+    OrderReqParams {}
 
 interface RestaurantReqParams {
   restaurantId: string;
@@ -85,4 +93,8 @@ interface CategoryReqParams {
 
 interface CartReqParams {
   cartId: string;
+}
+
+interface OrderReqParams {
+  restaurantId: string;
 }
