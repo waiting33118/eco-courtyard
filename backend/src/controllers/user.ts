@@ -116,8 +116,19 @@ const getCurrentUser = (req: AppRequest, res: Response) => {
   res.json({ status: 'success', result: sessionUser });
 };
 
+const logoutUser = (req: AppRequest, res: Response) => {
+  req.logout();
+  res.end();
+};
+
+const authSucceed = (req: AppRequest, res: Response) => {
+  res.json({ status: 'success', message: 'user login' });
+};
+
 export default {
   addUser,
   loginUser,
-  getCurrentUser
+  logoutUser,
+  getCurrentUser,
+  authSucceed
 };

@@ -75,7 +75,7 @@ router.post(
   '/user/login',
   controllers.user.loginUser,
   passport.authenticate('local'),
-  middlewares.auth.authSuccessResponse
+  controllers.user.authSucceed
 );
 router.get(
   '/user/profile',
@@ -85,7 +85,7 @@ router.get(
 router.post(
   '/user/logout',
   middlewares.auth.isAuthenticated,
-  middlewares.auth.logout
+  controllers.user.logoutUser
 );
 
 /* cart */
